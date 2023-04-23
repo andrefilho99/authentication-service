@@ -1,6 +1,7 @@
 package com.andrefilho99.authenticationservice.service;
 
 import com.andrefilho99.authenticationservice.domain.Role;
+import com.andrefilho99.authenticationservice.exceptions.NoDefaultRoleException;
 import com.andrefilho99.authenticationservice.repository.RoleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,21 +32,13 @@ public class RoleService {
     public Role getDefault() {
         return roleRepository.findByIsDefaultTrue()
                 .orElseThrow(
-                        () -> new NoSuchElementException(String.format("There is no default role."))
+                        () -> new NoDefaultRoleException(String.format("There is no default role to assign to new User."))
                 );
     }
 
     public Role create(Role role) {
         role.setCreated(new Date());
         role.setIsDefault(false);
-        return roleRepository.save(role);
-    }
-
-    public Role update(Long id, Role updatedRole) {
-
-        Role role = findById(id);
-        role.setName(updatedRole.getName());
-        role.setIsDefault(updatedRole.getIsDefault());
         return roleRepository.save(role);
     }
 
