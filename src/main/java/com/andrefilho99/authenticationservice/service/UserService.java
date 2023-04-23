@@ -3,6 +3,7 @@ package com.andrefilho99.authenticationservice.service;
 import com.andrefilho99.authenticationservice.domain.User;
 import com.andrefilho99.authenticationservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -15,6 +16,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final BCryptPasswordEncoder encoder;
 
     public List<User> findAll() {
         return userRepository.findAll();
@@ -31,6 +33,7 @@ public class UserService {
 
         user.setCreated(new Date());
         user.setModified(new Date());
+        user.setPassword(encoder.encode(user.getPassword()));
         user.setRole(roleService.getDefault());
         return userRepository.save(user);
     }

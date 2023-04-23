@@ -43,7 +43,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<UserResponse> create(@RequestBody UserRequest userRequest) {
 
         User user = userService.create(
