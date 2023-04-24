@@ -19,7 +19,6 @@ public class UserResponse {
     private String password;
     private Date created;
     private Date modified;
-
     @JsonProperty("role")
     private String roleName;
 }

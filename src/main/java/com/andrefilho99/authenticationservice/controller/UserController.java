@@ -1,6 +1,7 @@
 package com.andrefilho99.authenticationservice.controller;
 
 import com.andrefilho99.authenticationservice.domain.User;
+import com.andrefilho99.authenticationservice.dto.RoleRequest;
 import com.andrefilho99.authenticationservice.dto.UserRequest;
 import com.andrefilho99.authenticationservice.dto.UserResponse;
 import com.andrefilho99.authenticationservice.service.UserService;
@@ -24,7 +25,6 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> findAll() {
-
         List<User> users = userService.findAll();
         List<UserResponse> userResponses = users
                 .stream()
@@ -36,16 +36,14 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
-
         User user = userService.findById(id);
         UserResponse userResponse = modelMapper.map(user, UserResponse.class);
 
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity<UserResponse> create(@RequestBody UserRequest userRequest) {
-
         User user = userService.create(
                 modelMapper.map(userRequest, User.class)
         );
@@ -56,7 +54,6 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> update(@PathVariable Long id, @RequestBody UserRequest userRequest) {
-
         User user = userService.update(
                 id,
                 modelMapper.map(userRequest, User.class)
@@ -66,9 +63,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
+    @PutMapping("/{id}/roles")
+    public ResponseEntity<UserResponse> updateRole(@PathVariable Long id, @RequestBody RoleRequest roleRequest) {
+        User user = userService.updateRole(id, roleRequest.getName());
+        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
-
         userService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

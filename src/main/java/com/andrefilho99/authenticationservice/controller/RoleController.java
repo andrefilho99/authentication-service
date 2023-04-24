@@ -23,7 +23,6 @@ public class RoleController {
 
     @GetMapping
     public ResponseEntity<List<RoleResponse>> findAll() {
-
         List<Role> roles = roleService.findAll();
         List<RoleResponse> roleResponses = roles
                 .stream()
@@ -35,7 +34,6 @@ public class RoleController {
 
     @PostMapping
     public ResponseEntity<RoleResponse> create(@RequestBody RoleRequest roleRequest) {
-
         Role role = roleService.create(modelMapper.map(roleRequest, Role.class));
         RoleResponse roleResponse = modelMapper.map(role, RoleResponse.class);
 
@@ -44,7 +42,6 @@ public class RoleController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
-
         roleService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

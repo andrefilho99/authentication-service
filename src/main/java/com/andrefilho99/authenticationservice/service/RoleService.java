@@ -29,6 +29,13 @@ public class RoleService {
                 );
     }
 
+    public Role findByName(String name) {
+        return roleRepository.findByName(name)
+                .orElseThrow(
+                        () -> new NoSuchElementException(String.format("Role with name %s not found.", name))
+                );
+    }
+
     public Role getDefault() {
         return roleRepository.findByIsDefaultTrue()
                 .orElseThrow(
@@ -49,7 +56,6 @@ public class RoleService {
 
     @Transactional
     public Role isDefault(Long id) {
-
         Role defaultRole = findById(id);
         List<Role> roles = findAll();
 

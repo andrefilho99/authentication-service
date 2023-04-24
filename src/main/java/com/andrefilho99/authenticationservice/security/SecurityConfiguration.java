@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfiguration {
@@ -33,12 +34,20 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
+                )
+                .headers(headers -> headers.frameOptions().disable())
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")));
 
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/users/register").permitAll()
-                .requestMatchers("/users", "/users/*").hasAnyAuthority("ADMIN", "USER")
+                .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/register").permitAll()
+                .requestMatchers("/my-info").hasAnyAuthority("ADMIN", "USER")
                 .anyRequest().hasAuthority("ADMIN")
                 .and()
                 .httpBasic();

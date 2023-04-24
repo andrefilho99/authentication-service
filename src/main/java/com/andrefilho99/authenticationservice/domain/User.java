@@ -19,15 +19,10 @@ public class User {
     @Id
     @GeneratedValue
     private Long id;
-
     private String email;
-
     private String password;
-
     private Date created;
-
     private Date modified;
-    
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
