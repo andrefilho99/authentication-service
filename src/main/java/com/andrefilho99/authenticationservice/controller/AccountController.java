@@ -1,9 +1,13 @@
 package com.andrefilho99.authenticationservice.controller;
 
 import com.andrefilho99.authenticationservice.domain.User;
+import com.andrefilho99.authenticationservice.dto.JwtResponse;
 import com.andrefilho99.authenticationservice.dto.UserRequest;
 import com.andrefilho99.authenticationservice.dto.UserResponse;
+import com.andrefilho99.authenticationservice.security.AuthService;
+import com.andrefilho99.authenticationservice.security.JwtUtils;
 import com.andrefilho99.authenticationservice.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -22,6 +26,8 @@ public class AccountController {
 
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final AuthService authService;
+    private final JwtUtils jwtUtils;
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody UserRequest userRequest) {
@@ -33,9 +39,16 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 
+    @PostMapping("/token")
+    public ResponseEntity<JwtResponse> token(@RequestBody UserRequest userRequest) {
+        JwtResponse response = authService.authenticate(userRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     @GetMapping("/my-info")
-    public ResponseEntity<UserResponse> myInfo(Authentication auth) {
-        String email = auth.getName();
+    public ResponseEntity<UserResponse> myInfo(HttpServletRequest request) {
+        String jwt = request.getHeader("Authorization").substring(7);
+        String email = jwtUtils.extractUsername(jwt);
         User user = userService.findByEmail(email);
         UserResponse userResponse = modelMapper.map(user, UserResponse.class);
 
